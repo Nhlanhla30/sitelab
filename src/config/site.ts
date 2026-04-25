@@ -1,0 +1,96 @@
+export const siteConfig = {
+  name: "SiteLab",
+  description:
+    "Construction operations platform built for South African SMEs. Manage quotes, track projects, and keep clients in the loop.",
+  url: "https://sitelab.co.za",
+  ogImage: "https://sitelab.co.za/og.png",
+  creator: "SiteLab (Pty) Ltd",
+  keywords: [
+    "construction management",
+    "quote builder",
+    "project tracker",
+    "South Africa",
+    "contractor software",
+    "construction app",
+    "site management",
+    "invoicing",
+    "client portal",
+  ],
+  links: {
+    twitter: "https://twitter.com/sitelabza",
+    linkedin: "https://linkedin.com/company/sitelabza",
+  },
+} as const;
+
+export const pricingPlans = [
+  {
+    name: "Starter",
+    price: 0,
+    currency: "ZAR",
+    period: "month",
+    description: "Solo contractors getting started",
+    users: 1,
+    features: [
+      "3 active projects",
+      "Basic quote builder",
+      "5 quotes per month",
+      "Watermarked PDFs",
+    ],
+    cta: "Get started free",
+    popular: false,
+  },
+  {
+    name: "Pro",
+    price: 299,
+    currency: "ZAR",
+    period: "month",
+    description: "Small teams (2-5 people)",
+    users: 5,
+    features: [
+      "Unlimited projects",
+      "Full quote builder",
+      "Project tracker + site diary",
+      "Client portal",
+      "WhatsApp integration",
+      "Branded PDFs",
+    ],
+    cta: "Start 14-day trial",
+    popular: true,
+  },
+  {
+    name: "Business",
+    price: 599,
+    currency: "ZAR",
+    period: "month",
+    description: "Growing companies (6-20 people)",
+    users: 20,
+    features: [
+      "Everything in Pro",
+      "Invoicing & payments",
+      "Team & task management",
+      "Materials tracking",
+      "Priority support",
+    ],
+    cta: "Start 14-day trial",
+    popular: false,
+  },
+  {
+    name: "Enterprise",
+    price: null,
+    currency: "ZAR",
+    period: "month",
+    description: "Large contractors (20+ people)",
+    users: null,
+    features: [
+      "Everything in Business",
+      "Compliance & safety module",
+      "API access",
+      "Custom integrations",
+      "Dedicated account manager",
+    ],
+    cta: "Contact sales",
+    popular: false,
+  },
+] as const;
+
+export const VAT_RATE = 0.15; // South African VAT rate

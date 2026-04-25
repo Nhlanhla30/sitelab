@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+/* ─── SITELAB DESIGN TOKENS ─── */
+:root {
+  /* Primary brand — construction green */
+  --sl-green-50: #E8F5EE;
+  --sl-green-100: #C5E6D3;
+  --sl-green-200: #9ED5B5;
+  --sl-green-300: #77C497;
+  --sl-green-400: #59B780;
+  --sl-green-500: #1D9E75;
+  --sl-green-600: #178D67;
+  --sl-green-700: #117A57;
+  --sl-green-800: #0B6748;
+  --sl-green-900: #054535;
+
+  /* Neutral — slate palette */
+  --sl-slate-50: #F8FAFC;
+  --sl-slate-100: #F1F5F9;
+  --sl-slate-200: #E2E8F0;
+  --sl-slate-300: #CBD5E1;
+  --sl-slate-400: #94A3B8;
+  --sl-slate-500: #64748B;
+  --sl-slate-600: #475569;
+  --sl-slate-700: #334155;
+  --sl-slate-800: #1E293B;
+  --sl-slate-900: #0F172A;
+  --sl-slate-950: #020617;
+
+  /* Accent — amber for CTAs and highlights */
+  --sl-amber-400: #FBBF24;
+  --sl-amber-500: #F59E0B;
+  --sl-amber-600: #D97706;
+
+  /* Status colours */
+  --sl-success: #22C55E;
+  --sl-warning: #F59E0B;
+  --sl-danger: #EF4444;
+  --sl-info: #3B82F6;
+
+  /* Semantic tokens */
+  --background: var(--sl-slate-50);
+  --foreground: var(--sl-slate-900);
+  --muted: var(--sl-slate-100);
+  --muted-foreground: var(--sl-slate-500);
+  --border: var(--sl-slate-200);
+  --primary: var(--sl-green-500);
+  --primary-foreground: #FFFFFF;
+  --card: #FFFFFF;
+  --card-foreground: var(--sl-slate-900);
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: var(--sl-slate-950);
+  --foreground: var(--sl-slate-50);
+  --muted: var(--sl-slate-800);
+  --muted-foreground: var(--sl-slate-400);
+  --border: var(--sl-slate-700);
+  --card: var(--sl-slate-900);
+  --card-foreground: var(--sl-slate-50);
+}
+
+/* ─── BASE STYLES ─── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── UTILITY CLASSES ─── */
+.text-balance {
+  text-wrap: balance;
+}
+
+/* ─── QUOTE STATUS BADGES ─── */
+.badge-draft { background: var(--sl-slate-100); color: var(--sl-slate-600); }
+.badge-sent { background: #DBEAFE; color: #1E40AF; }
+.badge-viewed { background: #FEF3C7; color: #92400E; }
+.badge-accepted { background: var(--sl-green-50); color: var(--sl-green-700); }
+.badge-declined { background: #FEE2E2; color: #991B1B; }
