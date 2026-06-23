@@ -1,4 +1,9 @@
 import type { Metadata, Viewport } from "next";
+// TODO: Uncomment the Inter font import below when running locally.
+// It was commented out because Google Fonts was blocked in the build environment.
+// import { Inter } from "next/font/google";
+// const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-sans" });
+// Then add className={inter.variable} to the <html> tag below.
 import "@/styles/globals.css";
 import { siteConfig } from "@/config/site";
 
