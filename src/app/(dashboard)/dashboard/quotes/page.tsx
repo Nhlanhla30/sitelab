@@ -89,8 +89,13 @@ export default async function QuotesPage() {
                     key={quote.id}
                     className="transition-colors hover:bg-[var(--sl-slate-50)]"
                   >
-                    <td className="px-4 py-3 font-mono text-sm font-medium text-[var(--foreground)]">
-                      {quote.quote_number ?? "—"}
+                    <td className="px-4 py-3 font-mono text-sm font-medium">
+                      <Link
+                        href={`/dashboard/quotes/${quote.id}`}
+                        className="text-[var(--primary)] hover:underline"
+                      >
+                        {quote.quote_number ?? "—"}
+                      </Link>
                     </td>
                     <td className="px-4 py-3 text-sm text-[var(--foreground)]">{clientName}</td>
                     <td className="px-4 py-3 text-sm text-[var(--foreground)]">{quote.title}</td>
