@@ -1,0 +1,486 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase";
+import { formatZAR, calculateVAT } from "@/utils";
+
+type ClientOption = { id: string; name: string };
+
+type LineItem = {
+  id: string;
+  description: string;
+  category: "labour" | "material" | "equipment" | "other";
+  quantity: string;
+  unit: string;
+  unit_price: string;
+};
+
+const CATEGORIES: { value: LineItem["category"]; label: string }[] = [
+  { value: "labour", label: "Labour" },
+  { value: "material", label: "Material" },
+  { value: "equipment", label: "Equipment" },
+  { value: "other", label: "Other" },
+];
+
+const UNITS = ["each", "m²", "m³", "m", "kg", "ton", "hours", "days", "bags", "L"];
+
+function toCents(val: string): number {
+  return Math.round((parseFloat(val) || 0) * 100);
+}
+
+function lineTotal(li: LineItem): number {
+  return Math.round((parseFloat(li.quantity) || 0) * toCents(li.unit_price));
+}
+
+function blankItem(): LineItem {
+  return {
+    id: crypto.randomUUID(),
+    description: "",
+    category: "material",
+    quantity: "1",
+    unit: "each",
+    unit_price: "",
+  };
+}
+
+function thirtyDaysOut(): string {
+  const d = new Date();
+  d.setDate(d.getDate() + 30);
+  return d.toISOString().split("T")[0];
+}
+
+const inputClass =
+  "w-full rounded-lg border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20";
+
+const cellInputClass =
+  "w-full rounded border border-transparent bg-transparent px-2 py-1.5 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[var(--primary)]/20";
+
+export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
+  const router = useRouter();
+
+  const [clientId, setClientId] = useState(clients[0]?.id ?? "");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [items, setItems] = useState<LineItem[]>([blankItem()]);
+  const [includeVat, setIncludeVat] = useState(true);
+  const [validUntil, setValidUntil] = useState(thirtyDaysOut);
+  const [terms, setTerms] = useState("");
+  const [notes, setNotes] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const subtotal = items.reduce((sum, li) => sum + lineTotal(li), 0);
+  const vatAmount = includeVat ? calculateVAT(subtotal) : 0;
+  const total = subtotal + vatAmount;
+
+  function updateItem(id: string, field: keyof LineItem, value: string) {
+    setItems((prev) => prev.map((li) => (li.id === id ? { ...li, [field]: value } : li)));
+  }
+
+  function addItem() {
+    setItems((prev) => [...prev, blankItem()]);
+  }
+
+  function removeItem(id: string) {
+    setItems((prev) => {
+      const next = prev.filter((li) => li.id !== id);
+      return next.length > 0 ? next : [blankItem()];
+    });
+  }
+
+  async function handleSave() {
+    if (!clientId) { setError("Please select a client."); return; }
+    if (!title.trim()) { setError("Please enter a quote title."); return; }
+    if (!validUntil) { setError("Please set a valid until date."); return; }
+
+    const filledItems = items.filter((li) => li.description.trim());
+    if (filledItems.length === 0) { setError("Add at least one line item with a description."); return; }
+
+    setError(null);
+    setSaving(true);
+
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      setError("Session expired. Please sign in again.");
+      setSaving(false);
+      return;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const quoteResult = await (supabase.from("quotes") as any)
+      .insert({
+        user_id: user.id,
+        client_id: clientId,
+        title: title.trim(),
+        description: description.trim() || null,
+        subtotal,
+        vat_amount: vatAmount,
+        total,
+        include_vat: includeVat,
+        valid_until: validUntil,
+        terms: terms.trim() || null,
+        notes: notes.trim() || null,
+        status: "draft",
+      })
+      .select("id")
+      .single();
+
+    const quoteErr = quoteResult.error as { message: string } | null;
+    const quote = quoteResult.data as { id: string } | null;
+
+    if (quoteErr || !quote) {
+      setError(quoteErr?.message ?? "Failed to save quote.");
+      setSaving(false);
+      return;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: itemsErr } = await (supabase.from("quote_line_items") as any).insert(
+      filledItems.map((li, i) => ({
+        quote_id: quote.id,
+        description: li.description.trim(),
+        category: li.category,
+        quantity: parseFloat(li.quantity) || 1,
+        unit: li.unit,
+        unit_price: toCents(li.unit_price),
+        total: lineTotal(li),
+        sort_order: i,
+      }))
+    );
+
+    if (itemsErr) {
+      setError(itemsErr.message);
+      setSaving(false);
+      return;
+    }
+
+    router.push("/dashboard/quotes");
+  }
+
+  return (
+    <div className="p-8">
+      {/* Page header */}
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-[var(--foreground)]">New Quote</h1>
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="rounded-lg border border-[var(--border)] px-4 py-2.5 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--sl-slate-50)]"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saving}
+            className="rounded-lg bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+          >
+            {saving ? "Saving…" : "Save draft"}
+          </button>
+        </div>
+      </div>
+
+      {error && (
+        <div className="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_272px]">
+        {/* ── Left: form ── */}
+        <div className="space-y-6 min-w-0">
+
+          {/* Quote details */}
+          <div className="rounded-xl border border-[var(--border)] bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+              Quote details
+            </h2>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                  Client <span className="text-red-500">*</span>
+                </label>
+                {clients.length === 0 ? (
+                  <p className="text-sm text-amber-600">
+                    No clients yet.{" "}
+                    <a href="/dashboard/clients" className="underline">
+                      Add a client first.
+                    </a>
+                  </p>
+                ) : (
+                  <select
+                    value={clientId}
+                    onChange={(e) => setClientId(e.target.value)}
+                    className={inputClass}
+                  >
+                    <option value="">Select client…</option>
+                    {clients.map((c) => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                )}
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                  Valid until <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="date"
+                  value={validUntil}
+                  onChange={(e) => setValidUntil(e.target.value)}
+                  min={new Date().toISOString().split("T")[0]}
+                  className={inputClass}
+                />
+              </div>
+
+              <div className="col-span-2">
+                <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                  Quote title <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="e.g. Bathroom renovation — Smith residence"
+                  className={inputClass}
+                />
+              </div>
+
+              <div className="col-span-2">
+                <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                  Description{" "}
+                  <span className="text-xs font-normal text-[var(--muted-foreground)]">(optional)</span>
+                </label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={2}
+                  placeholder="Brief description of the scope of work"
+                  className={`${inputClass} resize-none`}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Line items */}
+          <div className="rounded-xl border border-[var(--border)] bg-white shadow-sm">
+            <div className="border-b border-[var(--border)] px-6 py-4">
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                Line items
+              </h2>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-[var(--border)] bg-[var(--sl-slate-50)]">
+                    <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]" style={{ minWidth: 200 }}>
+                      Description
+                    </th>
+                    <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]" style={{ width: 110 }}>
+                      Category
+                    </th>
+                    <th className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]" style={{ width: 70 }}>
+                      Qty
+                    </th>
+                    <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]" style={{ width: 80 }}>
+                      Unit
+                    </th>
+                    <th className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]" style={{ width: 110 }}>
+                      Unit price (R)
+                    </th>
+                    <th className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]" style={{ width: 100 }}>
+                      Total
+                    </th>
+                    <th style={{ width: 36 }} />
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--border)]">
+                  {items.map((li) => {
+                    const rowTotal = lineTotal(li);
+                    return (
+                      <tr key={li.id} className="group">
+                        <td className="px-3 py-2">
+                          <input
+                            type="text"
+                            value={li.description}
+                            onChange={(e) => updateItem(li.id, "description", e.target.value)}
+                            placeholder="Describe the item or work"
+                            className={cellInputClass}
+                          />
+                        </td>
+                        <td className="px-3 py-2">
+                          <select
+                            value={li.category}
+                            onChange={(e) => updateItem(li.id, "category", e.target.value)}
+                            className={cellInputClass}
+                          >
+                            {CATEGORIES.map((c) => (
+                              <option key={c.value} value={c.value}>{c.label}</option>
+                            ))}
+                          </select>
+                        </td>
+                        <td className="px-3 py-2">
+                          <input
+                            type="number"
+                            value={li.quantity}
+                            onChange={(e) => updateItem(li.id, "quantity", e.target.value)}
+                            min="0"
+                            step="0.01"
+                            className={`${cellInputClass} text-right`}
+                          />
+                        </td>
+                        <td className="px-3 py-2">
+                          <input
+                            type="text"
+                            list={`units-${li.id}`}
+                            value={li.unit}
+                            onChange={(e) => updateItem(li.id, "unit", e.target.value)}
+                            className={cellInputClass}
+                          />
+                          <datalist id={`units-${li.id}`}>
+                            {UNITS.map((u) => <option key={u} value={u} />)}
+                          </datalist>
+                        </td>
+                        <td className="px-3 py-2">
+                          <input
+                            type="number"
+                            value={li.unit_price}
+                            onChange={(e) => updateItem(li.id, "unit_price", e.target.value)}
+                            min="0"
+                            step="0.01"
+                            placeholder="0.00"
+                            className={`${cellInputClass} text-right`}
+                          />
+                        </td>
+                        <td className="px-3 py-2 text-right text-sm font-medium text-[var(--foreground)]">
+                          {rowTotal > 0 ? formatZAR(rowTotal) : <span className="text-[var(--muted-foreground)]">—</span>}
+                        </td>
+                        <td className="px-1 py-2">
+                          <button
+                            type="button"
+                            onClick={() => removeItem(li.id)}
+                            className="flex h-7 w-7 items-center justify-center rounded text-[var(--muted-foreground)] opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-500"
+                            aria-label="Remove row"
+                          >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="border-t border-[var(--border)] px-4 py-3">
+              <button
+                type="button"
+                onClick={addItem}
+                className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-[var(--primary)] transition-colors hover:bg-[var(--sl-slate-50)]"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Add line item
+              </button>
+            </div>
+          </div>
+
+          {/* Terms & notes */}
+          <div className="rounded-xl border border-[var(--border)] bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+              Terms &amp; notes
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                  Terms &amp; conditions{" "}
+                  <span className="text-xs font-normal text-[var(--muted-foreground)]">(optional)</span>
+                </label>
+                <textarea
+                  value={terms}
+                  onChange={(e) => setTerms(e.target.value)}
+                  rows={4}
+                  placeholder="Payment terms, delivery conditions, warranty…"
+                  className={`${inputClass} resize-none`}
+                />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                  Internal notes{" "}
+                  <span className="text-xs font-normal text-[var(--muted-foreground)]">(not shown to client)</span>
+                </label>
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={3}
+                  placeholder="Private notes about this quote…"
+                  className={`${inputClass} resize-none`}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Right: summary ── */}
+        <div>
+          <div className="sticky top-6 rounded-xl border border-[var(--border)] bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+              Summary
+            </h2>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-[var(--muted-foreground)]">Subtotal</span>
+                <span className="font-medium text-[var(--foreground)]">{formatZAR(subtotal)}</span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <label className="flex cursor-pointer items-center gap-2 text-sm text-[var(--muted-foreground)]">
+                  <input
+                    type="checkbox"
+                    checked={includeVat}
+                    onChange={(e) => setIncludeVat(e.target.checked)}
+                    className="h-4 w-4 cursor-pointer rounded accent-[var(--primary)]"
+                  />
+                  VAT (15%)
+                </label>
+                <span className="text-sm font-medium text-[var(--foreground)]">
+                  {includeVat ? formatZAR(vatAmount) : <span className="text-[var(--muted-foreground)]">—</span>}
+                </span>
+              </div>
+
+              <div className="border-t border-[var(--border)] pt-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold text-[var(--foreground)]">Total</span>
+                  <span className="text-lg font-bold text-[var(--foreground)]">
+                    {formatZAR(total)}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="mt-5 w-full rounded-lg bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+            >
+              {saving ? "Saving…" : "Save draft"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
