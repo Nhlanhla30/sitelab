@@ -10,10 +10,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  experimental: {
-    serverActions: {
-      bodySizeLimit: "5mb", // For photo uploads from construction sites
-    },
+  serverActions: {
+    bodySizeLimit: "5mb",
   },
 };
 
