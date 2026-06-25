@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@source "../**/*.{ts,tsx}";
+@source "../components/**/*.{ts,tsx}";
 
 /* ─── SITELAB DESIGN TOKENS ─── */
 :root {

@@ -4,7 +4,7 @@ import type { Metadata, Viewport } from "next";
 // import { Inter } from "next/font/google";
 // const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-sans" });
 // Then add className={inter.variable} to the <html> tag below.
-import "@/styles/globals.css";
+import "./globals.css";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {

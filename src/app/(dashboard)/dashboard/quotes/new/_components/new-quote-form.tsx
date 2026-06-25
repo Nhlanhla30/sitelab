@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Plus, X, ChevronLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { formatZAR, calculateVAT } from "@/utils";
 
@@ -17,10 +18,10 @@ type LineItem = {
 };
 
 const CATEGORIES: { value: LineItem["category"]; label: string }[] = [
-  { value: "labour", label: "Labour" },
-  { value: "material", label: "Material" },
+  { value: "labour",    label: "Labour"    },
+  { value: "material",  label: "Material"  },
   { value: "equipment", label: "Equipment" },
-  { value: "other", label: "Other" },
+  { value: "other",     label: "Other"     },
 ];
 
 const UNITS = ["each", "m²", "m³", "m", "kg", "ton", "hours", "days", "bags", "L"];
@@ -75,7 +76,9 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
   const total = subtotal + vatAmount;
 
   function updateItem(id: string, field: keyof LineItem, value: string) {
-    setItems((prev) => prev.map((li) => (li.id === id ? { ...li, [field]: value } : li)));
+    setItems((prev) =>
+      prev.map((li) => (li.id === id ? { ...li, [field]: value } : li))
+    );
   }
 
   function addItem() {
@@ -95,7 +98,10 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
     if (!validUntil) { setError("Please set a valid until date."); return; }
 
     const filledItems = items.filter((li) => li.description.trim());
-    if (filledItems.length === 0) { setError("Add at least one line item with a description."); return; }
+    if (filledItems.length === 0) {
+      setError("Add at least one line item with a description.");
+      return;
+    }
 
     setError(null);
     setSaving(true);
@@ -164,9 +170,26 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
 
   return (
     <div className="p-8">
+      {/* Back link */}
+      <button
+        type="button"
+        onClick={() => router.back()}
+        className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--muted-foreground)] transition-colors hover:text-[var(--foreground)]"
+      >
+        <ChevronLeft size={15} aria-hidden />
+        Quotes
+      </button>
+
       {/* Page header */}
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[var(--foreground)]">New Quote</h1>
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-[var(--foreground)]">
+            New Quote
+          </h1>
+          <p className="mt-0.5 text-sm text-[var(--muted-foreground)]">
+            Fill in the details below and save as a draft.
+          </p>
+        </div>
         <div className="flex gap-3">
           <button
             type="button"
@@ -194,7 +217,7 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_272px]">
         {/* ── Left: form ── */}
-        <div className="space-y-6 min-w-0">
+        <div className="min-w-0 space-y-6">
 
           {/* Quote details */}
           <div className="rounded-xl border border-[var(--border)] bg-white p-6 shadow-sm">
@@ -221,7 +244,9 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
                   >
                     <option value="">Select client…</option>
                     {clients.map((c) => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
                     ))}
                   </select>
                 )}
@@ -256,7 +281,9 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
               <div className="col-span-2">
                 <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
                   Description{" "}
-                  <span className="text-xs font-normal text-[var(--muted-foreground)]">(optional)</span>
+                  <span className="text-xs font-normal text-[var(--muted-foreground)]">
+                    (optional)
+                  </span>
                 </label>
                 <textarea
                   value={description}
@@ -281,22 +308,40 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-[var(--border)] bg-[var(--sl-slate-50)]">
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]" style={{ minWidth: 200 }}>
+                    <th
+                      className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]"
+                      style={{ minWidth: 200 }}
+                    >
                       Description
                     </th>
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]" style={{ width: 110 }}>
+                    <th
+                      className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]"
+                      style={{ width: 110 }}
+                    >
                       Category
                     </th>
-                    <th className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]" style={{ width: 70 }}>
+                    <th
+                      className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]"
+                      style={{ width: 70 }}
+                    >
                       Qty
                     </th>
-                    <th className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]" style={{ width: 80 }}>
+                    <th
+                      className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]"
+                      style={{ width: 80 }}
+                    >
                       Unit
                     </th>
-                    <th className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]" style={{ width: 110 }}>
+                    <th
+                      className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]"
+                      style={{ width: 110 }}
+                    >
                       Unit price (R)
                     </th>
-                    <th className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]" style={{ width: 100 }}>
+                    <th
+                      className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]"
+                      style={{ width: 100 }}
+                    >
                       Total
                     </th>
                     <th style={{ width: 36 }} />
@@ -306,12 +351,14 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
                   {items.map((li) => {
                     const rowTotal = lineTotal(li);
                     return (
-                      <tr key={li.id} className="group">
+                      <tr key={li.id} className="group hover:bg-[var(--sl-slate-50)]">
                         <td className="px-3 py-2">
                           <input
                             type="text"
                             value={li.description}
-                            onChange={(e) => updateItem(li.id, "description", e.target.value)}
+                            onChange={(e) =>
+                              updateItem(li.id, "description", e.target.value)
+                            }
                             placeholder="Describe the item or work"
                             className={cellInputClass}
                           />
@@ -319,11 +366,15 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
                         <td className="px-3 py-2">
                           <select
                             value={li.category}
-                            onChange={(e) => updateItem(li.id, "category", e.target.value)}
+                            onChange={(e) =>
+                              updateItem(li.id, "category", e.target.value)
+                            }
                             className={cellInputClass}
                           >
                             {CATEGORIES.map((c) => (
-                              <option key={c.value} value={c.value}>{c.label}</option>
+                              <option key={c.value} value={c.value}>
+                                {c.label}
+                              </option>
                             ))}
                           </select>
                         </td>
@@ -331,7 +382,9 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
                           <input
                             type="number"
                             value={li.quantity}
-                            onChange={(e) => updateItem(li.id, "quantity", e.target.value)}
+                            onChange={(e) =>
+                              updateItem(li.id, "quantity", e.target.value)
+                            }
                             min="0"
                             step="0.01"
                             className={`${cellInputClass} text-right`}
@@ -342,26 +395,38 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
                             type="text"
                             list={`units-${li.id}`}
                             value={li.unit}
-                            onChange={(e) => updateItem(li.id, "unit", e.target.value)}
+                            onChange={(e) =>
+                              updateItem(li.id, "unit", e.target.value)
+                            }
                             className={cellInputClass}
                           />
                           <datalist id={`units-${li.id}`}>
-                            {UNITS.map((u) => <option key={u} value={u} />)}
+                            {UNITS.map((u) => (
+                              <option key={u} value={u} />
+                            ))}
                           </datalist>
                         </td>
                         <td className="px-3 py-2">
                           <input
                             type="number"
                             value={li.unit_price}
-                            onChange={(e) => updateItem(li.id, "unit_price", e.target.value)}
+                            onChange={(e) =>
+                              updateItem(li.id, "unit_price", e.target.value)
+                            }
                             min="0"
                             step="0.01"
                             placeholder="0.00"
                             className={`${cellInputClass} text-right`}
                           />
                         </td>
-                        <td className="px-3 py-2 text-right text-sm font-medium text-[var(--foreground)]">
-                          {rowTotal > 0 ? formatZAR(rowTotal) : <span className="text-[var(--muted-foreground)]">—</span>}
+                        <td className="px-3 py-2 text-right text-sm font-semibold text-[var(--foreground)]">
+                          {rowTotal > 0 ? (
+                            formatZAR(rowTotal)
+                          ) : (
+                            <span className="text-[var(--muted-foreground)]">
+                              —
+                            </span>
+                          )}
                         </td>
                         <td className="px-1 py-2">
                           <button
@@ -370,9 +435,7 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
                             className="flex h-7 w-7 items-center justify-center rounded text-[var(--muted-foreground)] opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-500"
                             aria-label="Remove row"
                           >
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-                            </svg>
+                            <X size={13} aria-hidden />
                           </button>
                         </td>
                       </tr>
@@ -388,9 +451,7 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
                 onClick={addItem}
                 className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-[var(--primary)] transition-colors hover:bg-[var(--sl-slate-50)]"
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
+                <Plus size={13} strokeWidth={2.5} aria-hidden />
                 Add line item
               </button>
             </div>
@@ -405,7 +466,9 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
                   Terms &amp; conditions{" "}
-                  <span className="text-xs font-normal text-[var(--muted-foreground)]">(optional)</span>
+                  <span className="text-xs font-normal text-[var(--muted-foreground)]">
+                    (optional)
+                  </span>
                 </label>
                 <textarea
                   value={terms}
@@ -418,7 +481,9 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
                   Internal notes{" "}
-                  <span className="text-xs font-normal text-[var(--muted-foreground)]">(not shown to client)</span>
+                  <span className="text-xs font-normal text-[var(--muted-foreground)]">
+                    (not shown to client)
+                  </span>
                 </label>
                 <textarea
                   value={notes}
@@ -432,7 +497,7 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
           </div>
         </div>
 
-        {/* ── Right: summary ── */}
+        {/* ── Right: sticky summary ── */}
         <div>
           <div className="sticky top-6 rounded-xl border border-[var(--border)] bg-white p-6 shadow-sm">
             <h2 className="mb-4 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
@@ -442,7 +507,9 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
             <div className="space-y-3">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-[var(--muted-foreground)]">Subtotal</span>
-                <span className="font-medium text-[var(--foreground)]">{formatZAR(subtotal)}</span>
+                <span className="font-medium text-[var(--foreground)]">
+                  {formatZAR(subtotal)}
+                </span>
               </div>
 
               <div className="flex items-center justify-between">
@@ -456,14 +523,20 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
                   VAT (15%)
                 </label>
                 <span className="text-sm font-medium text-[var(--foreground)]">
-                  {includeVat ? formatZAR(vatAmount) : <span className="text-[var(--muted-foreground)]">—</span>}
+                  {includeVat ? (
+                    formatZAR(vatAmount)
+                  ) : (
+                    <span className="text-[var(--muted-foreground)]">—</span>
+                  )}
                 </span>
               </div>
 
               <div className="border-t border-[var(--border)] pt-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-[var(--foreground)]">Total</span>
-                  <span className="text-lg font-bold text-[var(--foreground)]">
+                  <span className="text-sm font-bold text-[var(--foreground)]">
+                    Total
+                  </span>
+                  <span className="text-xl font-bold text-[var(--foreground)]">
                     {formatZAR(total)}
                   </span>
                 </div>

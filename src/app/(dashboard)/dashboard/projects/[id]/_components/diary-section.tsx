@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Plus, BookOpen } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { formatDate } from "@/utils";
 
@@ -34,11 +35,23 @@ function weatherIcon(w: WeatherType): string {
   return WEATHER_OPTIONS.find((o) => o.value === w)?.icon ?? "—";
 }
 
+function weatherLabel(w: WeatherType): string {
+  return WEATHER_OPTIONS.find((o) => o.value === w)?.label ?? w;
+}
+
 function todayStr(): string {
   return new Date().toISOString().split("T")[0];
 }
 
-const BLANK = { date: todayStr(), weather: "sunny" as WeatherType, workers: "1", notes: "" };
+const BLANK = {
+  date: todayStr(),
+  weather: "sunny" as WeatherType,
+  workers: "1",
+  notes: "",
+};
+
+const inputClass =
+  "w-full rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20";
 
 export default function DiarySection({ projectId, createdBy, entries }: Props) {
   const router = useRouter();
@@ -69,38 +82,38 @@ export default function DiarySection({ projectId, createdBy, entries }: Props) {
     router.refresh();
   }
 
-  const inputClass =
-    "w-full rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20";
-
   return (
     <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-white shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-[var(--border)] px-6 py-4">
-        <h2 className="font-semibold text-[var(--foreground)]">
-          Site diary{" "}
-          <span className="ml-1 text-sm font-normal text-[var(--muted-foreground)]">
-            ({entries.length} {entries.length === 1 ? "entry" : "entries"})
-          </span>
-        </h2>
+        <div>
+          <h2 className="font-semibold text-[var(--foreground)]">Site diary</h2>
+          <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">
+            {entries.length} {entries.length === 1 ? "entry" : "entries"}
+          </p>
+        </div>
         <button
           onClick={() => { setShowForm((s) => !s); setError(null); }}
           className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--sl-slate-50)]"
         >
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
+          <Plus size={13} strokeWidth={2.5} aria-hidden />
           Add entry
         </button>
       </div>
 
-      {/* Add form */}
+      {/* Inline add form */}
       {showForm && (
-        <form onSubmit={handleAdd} className="border-b border-[var(--border)] bg-[var(--sl-slate-50)] px-6 py-4 space-y-3">
+        <form
+          onSubmit={handleAdd}
+          className="space-y-3 border-b border-[var(--border)] bg-[var(--sl-slate-50)] px-6 py-4"
+        >
           {error && <p className="text-sm text-red-600">{error}</p>}
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Date</label>
+              <label className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">
+                Date
+              </label>
               <input
                 type="date"
                 value={form.date}
@@ -109,10 +122,17 @@ export default function DiarySection({ projectId, createdBy, entries }: Props) {
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Weather</label>
+              <label className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">
+                Weather
+              </label>
               <select
                 value={form.weather}
-                onChange={(e) => setForm((f) => ({ ...f, weather: e.target.value as WeatherType }))}
+                onChange={(e) =>
+                  setForm((f) => ({
+                    ...f,
+                    weather: e.target.value as WeatherType,
+                  }))
+                }
                 className={inputClass}
               >
                 {WEATHER_OPTIONS.map((o) => (
@@ -123,19 +143,25 @@ export default function DiarySection({ projectId, createdBy, entries }: Props) {
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Workers on site</label>
+              <label className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">
+                Workers on site
+              </label>
               <input
                 type="number"
                 min="0"
                 value={form.workers}
-                onChange={(e) => setForm((f) => ({ ...f, workers: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, workers: e.target.value }))
+                }
                 className={inputClass}
               />
             </div>
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">Notes <span className="text-red-500">*</span></label>
+            <label className="mb-1 block text-xs font-medium text-[var(--muted-foreground)]">
+              Notes <span className="text-red-500">*</span>
+            </label>
             <textarea
               required
               rows={3}
@@ -156,7 +182,11 @@ export default function DiarySection({ projectId, createdBy, entries }: Props) {
             </button>
             <button
               type="button"
-              onClick={() => { setShowForm(false); setForm({ ...BLANK, date: todayStr() }); setError(null); }}
+              onClick={() => {
+                setShowForm(false);
+                setForm({ ...BLANK, date: todayStr() });
+                setError(null);
+              }}
               className="rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-[var(--muted-foreground)] transition-colors hover:bg-white"
             >
               Cancel
@@ -167,31 +197,48 @@ export default function DiarySection({ projectId, createdBy, entries }: Props) {
 
       {/* Entries list */}
       {entries.length === 0 && !showForm ? (
-        <p className="px-6 py-8 text-sm text-[var(--muted-foreground)]">
-          No diary entries yet. Start logging daily site activity.
-        </p>
+        <div className="flex flex-col items-center py-10 text-center">
+          <BookOpen
+            size={28}
+            className="mb-3 text-[var(--sl-slate-300)]"
+            aria-hidden
+          />
+          <p className="text-sm text-[var(--muted-foreground)]">
+            No diary entries yet. Start logging daily site activity.
+          </p>
+        </div>
       ) : (
         <ul className="divide-y divide-[var(--border)]">
           {entries.map((entry) => (
             <li key={entry.id} className="px-6 py-4">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <span className="text-xl leading-none" role="img" aria-label={entry.weather}>
-                    {weatherIcon(entry.weather)}
-                  </span>
-                  <div>
-                    <p className="text-sm font-medium text-[var(--foreground)]">
+              <div className="flex items-start gap-3">
+                <span
+                  className="mt-0.5 text-xl leading-none"
+                  role="img"
+                  aria-label={entry.weather}
+                >
+                  {weatherIcon(entry.weather)}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-baseline gap-2">
+                    <p className="text-sm font-semibold text-[var(--foreground)]">
                       {formatDate(entry.date)}
                     </p>
-                    <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">
-                      {entry.workers_on_site} {entry.workers_on_site === 1 ? "worker" : "workers"} on site
-                    </p>
+                    <span className="text-xs text-[var(--muted-foreground)]">
+                      {weatherLabel(entry.weather)}
+                    </span>
+                    <span className="text-xs text-[var(--muted-foreground)]">
+                      ·{" "}
+                      {entry.workers_on_site}{" "}
+                      {entry.workers_on_site === 1 ? "worker" : "workers"} on
+                      site
+                    </span>
                   </div>
+                  <p className="mt-1.5 line-clamp-3 text-sm leading-relaxed text-[var(--foreground)]">
+                    {entry.notes}
+                  </p>
                 </div>
               </div>
-              <p className="mt-2 text-sm text-[var(--foreground)] leading-relaxed line-clamp-3">
-                {entry.notes}
-              </p>
             </li>
           ))}
         </ul>

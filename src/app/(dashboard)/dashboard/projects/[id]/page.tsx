@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
+import { ChevronLeft, Banknote, CalendarDays, CalendarCheck2 } from "lucide-react";
 import { createClient } from "@/lib/supabase-server";
 import type { Database } from "@/types/database";
 import { formatZAR, formatDate } from "@/utils";
@@ -87,14 +88,12 @@ export default async function ProjectDetailPage({
         href="/dashboard/projects"
         className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--muted-foreground)] transition-colors hover:text-[var(--foreground)]"
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="15 18 9 12 15 6" />
-        </svg>
+        <ChevronLeft size={15} aria-hidden />
         Projects
       </Link>
 
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-6 rounded-xl border border-[var(--border)] bg-white p-6 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-[var(--foreground)]">
@@ -104,44 +103,78 @@ export default async function ProjectDetailPage({
               <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                 {client.name}
                 {(project.city || project.province) && (
-                  <span> · {[project.city, project.province].filter(Boolean).join(", ")}</span>
+                  <span>
+                    {" "}
+                    ·{" "}
+                    {[project.city, project.province]
+                      .filter(Boolean)
+                      .join(", ")}
+                  </span>
                 )}
+              </p>
+            )}
+            {project.description && (
+              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+                {project.description}
               </p>
             )}
           </div>
           <ProjectStatus projectId={project.id} status={project.status} />
         </div>
 
-        {project.description && (
-          <p className="mt-3 text-sm text-[var(--muted-foreground)]">
-            {project.description}
-          </p>
-        )}
-
         {/* Stats row */}
-        <div className="mt-5 flex flex-wrap gap-6">
+        <div className="mt-5 flex flex-wrap gap-5">
           {project.budget > 0 && (
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Budget</p>
-              <p className="mt-0.5 text-sm font-semibold text-[var(--foreground)]">{formatZAR(project.budget)}</p>
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--sl-green-50)]">
+                <Banknote size={15} className="text-[var(--sl-green-600)]" aria-hidden />
+              </div>
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+                  Budget
+                </p>
+                <p className="text-sm font-semibold text-[var(--foreground)]">
+                  {formatZAR(project.budget)}
+                </p>
+              </div>
             </div>
           )}
           {project.start_date && (
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Start date</p>
-              <p className="mt-0.5 text-sm font-semibold text-[var(--foreground)]">{formatDate(project.start_date)}</p>
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50">
+                <CalendarDays size={15} className="text-blue-500" aria-hidden />
+              </div>
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+                  Start date
+                </p>
+                <p className="text-sm font-semibold text-[var(--foreground)]">
+                  {formatDate(project.start_date)}
+                </p>
+              </div>
             </div>
           )}
           {project.end_date && (
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">End date</p>
-              <p className="mt-0.5 text-sm font-semibold text-[var(--foreground)]">{formatDate(project.end_date)}</p>
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50">
+                <CalendarCheck2 size={15} className="text-amber-500" aria-hidden />
+              </div>
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+                  End date
+                </p>
+                <p className="text-sm font-semibold text-[var(--foreground)]">
+                  {formatDate(project.end_date)}
+                </p>
+              </div>
             </div>
           )}
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Progress</p>
-            <div className="mt-1.5 flex items-center gap-2">
-              <div className="h-2 w-28 overflow-hidden rounded-full bg-[var(--sl-slate-200)]">
+            <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+              Overall progress
+            </p>
+            <div className="flex items-center gap-2.5">
+              <div className="h-2 w-32 overflow-hidden rounded-full bg-[var(--sl-slate-200)]">
                 <div
                   className="h-full rounded-full bg-[var(--sl-green-500)] transition-all"
                   style={{ width: `${overallProgress}%` }}

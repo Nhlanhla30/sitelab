@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase-server";
+import { redirect } from "next/navigation";
 import Sidebar from "./_components/sidebar";
 
 export default async function DashboardLayout({
@@ -8,35 +8,22 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
 
-  if (!user) {
-    redirect("/login");
-  }
-
-  const profileResult = await supabase
+  const { data: profile }: { data: { full_name: string | null; company_name: string | null } | null } = await supabase
     .from("profiles")
     .select("full_name, company_name")
     .eq("id", user.id)
     .single();
 
-  const profile = profileResult.data as {
-    full_name: string;
-    company_name: string | null;
-  } | null;
-
-  const sidebarUser = {
-    email: user.email ?? "",
-    fullName: profile?.full_name || user.email?.split("@")[0] || "User",
-    companyName: profile?.company_name ?? null,
-  };
-
   return (
-    <div className="flex h-screen overflow-hidden bg-[var(--sl-slate-50)]">
-      <Sidebar user={sidebarUser} />
-      <main className="flex-1 overflow-y-auto">
+    <div className="min-h-screen bg-slate-50">
+      <Sidebar
+        fullName={profile?.full_name ?? user.email ?? ""}
+        companyName={profile?.company_name ?? ""}
+      />
+      <main style={{ marginLeft: '256px', minHeight: '100vh', padding: '32px' }}>
         {children}
       </main>
     </div>

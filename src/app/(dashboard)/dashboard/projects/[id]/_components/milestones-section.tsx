@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Plus, Check } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { formatDate } from "@/utils";
 
@@ -21,6 +22,9 @@ type Props = {
 };
 
 const BLANK_FORM = { title: "", description: "", due_date: "" };
+
+const inputClass =
+  "w-full rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20";
 
 export default function MilestonesSection({ projectId, milestones }: Props) {
   const router = useRouter();
@@ -73,33 +77,31 @@ export default function MilestonesSection({ projectId, milestones }: Props) {
     setToggling(null);
   }
 
-  const inputClass =
-    "w-full rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20";
-
   return (
     <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-white shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-[var(--border)] px-6 py-4">
-        <h2 className="font-semibold text-[var(--foreground)]">
-          Milestones{" "}
-          <span className="ml-1 text-sm font-normal text-[var(--muted-foreground)]">
-            ({milestones.length})
-          </span>
-        </h2>
+        <div>
+          <h2 className="font-semibold text-[var(--foreground)]">Milestones</h2>
+          <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">
+            {milestones.length} {milestones.length === 1 ? "milestone" : "milestones"}
+          </p>
+        </div>
         <button
           onClick={() => { setShowForm((s) => !s); setError(null); }}
           className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--sl-slate-50)]"
         >
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
+          <Plus size={13} strokeWidth={2.5} aria-hidden />
           Add milestone
         </button>
       </div>
 
-      {/* Add form */}
+      {/* Inline add form */}
       {showForm && (
-        <form onSubmit={handleAdd} className="border-b border-[var(--border)] bg-[var(--sl-slate-50)] px-6 py-4">
+        <form
+          onSubmit={handleAdd}
+          className="border-b border-[var(--border)] bg-[var(--sl-slate-50)] px-6 py-4"
+        >
           {error && (
             <p className="mb-3 text-sm text-red-600">{error}</p>
           )}
@@ -148,7 +150,7 @@ export default function MilestonesSection({ projectId, milestones }: Props) {
       {/* List */}
       {milestones.length === 0 && !showForm ? (
         <p className="px-6 py-8 text-sm text-[var(--muted-foreground)]">
-          No milestones yet. Add one to track progress.
+          No milestones yet. Add one to start tracking progress.
         </p>
       ) : (
         <ul className="divide-y divide-[var(--border)]">
@@ -156,28 +158,34 @@ export default function MilestonesSection({ projectId, milestones }: Props) {
             const done = m.completed_at !== null;
             return (
               <li key={m.id} className="flex items-start gap-4 px-6 py-4">
+                {/* Checkbox */}
                 <button
                   type="button"
                   onClick={() => toggleComplete(m)}
                   disabled={toggling === m.id}
-                  className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 border-[var(--border)] transition-colors disabled:opacity-50"
+                  className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors disabled:opacity-50"
                   style={
                     done
-                      ? { backgroundColor: "var(--sl-green-500)", borderColor: "var(--sl-green-500)" }
-                      : undefined
+                      ? {
+                          backgroundColor: "var(--sl-green-500)",
+                          borderColor: "var(--sl-green-500)",
+                        }
+                      : { borderColor: "var(--sl-slate-300)" }
                   }
                   aria-label={done ? "Mark incomplete" : "Mark complete"}
                 >
-                  {done && (
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                  )}
+                  {done && <Check size={11} color="white" strokeWidth={3} aria-hidden />}
                 </button>
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-4">
-                    <p className={`text-sm font-medium ${done ? "text-[var(--muted-foreground)] line-through" : "text-[var(--foreground)]"}`}>
+                    <p
+                      className={`text-sm font-medium ${
+                        done
+                          ? "text-[var(--muted-foreground)] line-through"
+                          : "text-[var(--foreground)]"
+                      }`}
+                    >
                       {m.title}
                     </p>
                     {m.due_date && (
@@ -188,7 +196,9 @@ export default function MilestonesSection({ projectId, milestones }: Props) {
                   </div>
 
                   {m.description && (
-                    <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">{m.description}</p>
+                    <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">
+                      {m.description}
+                    </p>
                   )}
 
                   <div className="mt-2 flex items-center gap-2">
