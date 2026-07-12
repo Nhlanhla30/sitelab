@@ -54,8 +54,10 @@ function thirtyDaysOut(): string {
 const inputClass =
   "w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20";
 
-const cellInputClass =
-  "w-full rounded border border-transparent bg-transparent px-2 py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500/20";
+const cellInputBase =
+  "rounded border border-transparent bg-transparent px-2 py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500/20";
+
+const cellInputClass = `${cellInputBase} w-full`;
 
 export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
   const router = useRouter();
@@ -301,47 +303,47 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
               </h2>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div>
+              <table className="w-full table-fixed">
                 <thead>
                   <tr className="border-b border-slate-200 bg-slate-50">
                     <th
-                      className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"
-                      style={{ minWidth: 200 }}
+                      className="px-2 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"
+                      style={{ width: "32%" }}
                     >
                       Description
                     </th>
                     <th
-                      className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"
-                      style={{ width: 110 }}
+                      className="px-2 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"
+                      style={{ width: "17%" }}
                     >
                       Category
                     </th>
                     <th
-                      className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-slate-500"
-                      style={{ width: 70 }}
+                      className="px-2 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-slate-500"
+                      style={{ width: "8%" }}
                     >
                       Qty
                     </th>
                     <th
-                      className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"
-                      style={{ width: 80 }}
+                      className="px-2 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"
+                      style={{ width: "12%" }}
                     >
                       Unit
                     </th>
                     <th
-                      className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-slate-500"
-                      style={{ width: 110 }}
+                      className="px-2 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-slate-500"
+                      style={{ width: "16%" }}
                     >
                       Unit price (R)
                     </th>
                     <th
-                      className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-slate-500"
-                      style={{ width: 100 }}
+                      className="px-2 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-slate-500"
+                      style={{ width: "15%" }}
                     >
                       Total
                     </th>
-                    <th style={{ width: 36 }} />
+                    <th style={{ width: "3%" }} />
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -349,7 +351,7 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
                     const rowTotal = lineTotal(li);
                     return (
                       <tr key={li.id} className="group hover:bg-slate-50">
-                        <td className="px-3 py-2">
+                        <td className="px-2 py-2">
                           <input
                             type="text"
                             value={li.description}
@@ -360,13 +362,13 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
                             className={cellInputClass}
                           />
                         </td>
-                        <td className="px-3 py-2">
+                        <td className="px-2 py-2">
                           <select
                             value={li.category}
                             onChange={(e) =>
                               updateItem(li.id, "category", e.target.value)
                             }
-                            className={cellInputClass}
+                            className={`${cellInputClass} pr-6`}
                           >
                             {CATEGORIES.map((c) => (
                               <option key={c.value} value={c.value}>
@@ -375,7 +377,7 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
                             ))}
                           </select>
                         </td>
-                        <td className="px-3 py-2">
+                        <td className="px-2 py-2">
                           <input
                             type="number"
                             value={li.quantity}
@@ -387,7 +389,7 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
                             className={`${cellInputClass} text-right`}
                           />
                         </td>
-                        <td className="px-3 py-2">
+                        <td className="px-2 py-2">
                           <input
                             type="text"
                             list={`units-${li.id}`}
@@ -403,7 +405,7 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
                             ))}
                           </datalist>
                         </td>
-                        <td className="px-3 py-2">
+                        <td className="px-2 py-2">
                           <input
                             type="number"
                             value={li.unit_price}
@@ -416,7 +418,7 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
                             className={`${cellInputClass} text-right`}
                           />
                         </td>
-                        <td className="px-3 py-2 text-right text-sm font-semibold text-slate-900">
+                        <td className="px-2 py-2 text-right text-sm font-semibold text-slate-900">
                           {rowTotal > 0 ? (
                             formatZAR(rowTotal)
                           ) : (
