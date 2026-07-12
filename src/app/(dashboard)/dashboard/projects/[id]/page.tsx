@@ -82,30 +82,29 @@ export default async function ProjectDetailPage({
       : 0;
 
   return (
-    <div className="p-8">
+    <>
       {/* Back link */}
       <Link
         href="/dashboard/projects"
-        className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--muted-foreground)] transition-colors hover:text-[var(--foreground)]"
+        className="mb-6 inline-flex items-center gap-1.5 text-sm text-slate-500 transition-colors hover:text-slate-900"
       >
         <ChevronLeft size={15} aria-hidden />
         Projects
       </Link>
 
-      {/* Header */}
-      <div className="mb-6 rounded-xl border border-[var(--border)] bg-white p-6 shadow-sm">
+      {/* Header card */}
+      <div className="mb-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--foreground)]">
+            <h1 className="text-2xl font-bold text-slate-900">
               {project.name}
             </h1>
             {client && (
-              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              <p className="mt-1 text-sm text-slate-500">
                 {client.name}
                 {(project.city || project.province) && (
                   <span>
-                    {" "}
-                    ·{" "}
+                    {" · "}
                     {[project.city, project.province]
                       .filter(Boolean)
                       .join(", ")}
@@ -114,7 +113,7 @@ export default async function ProjectDetailPage({
               </p>
             )}
             {project.description && (
-              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+              <p className="mt-2 text-sm text-slate-500">
                 {project.description}
               </p>
             )}
@@ -126,14 +125,14 @@ export default async function ProjectDetailPage({
         <div className="mt-5 flex flex-wrap gap-5">
           {project.budget > 0 && (
             <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--sl-green-50)]">
-                <Banknote size={15} className="text-[var(--sl-green-600)]" aria-hidden />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50">
+                <Banknote size={15} className="text-emerald-600" aria-hidden />
               </div>
               <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
                   Budget
                 </p>
-                <p className="text-sm font-semibold text-[var(--foreground)]">
+                <p className="text-sm font-semibold text-slate-900">
                   {formatZAR(project.budget)}
                 </p>
               </div>
@@ -145,10 +144,10 @@ export default async function ProjectDetailPage({
                 <CalendarDays size={15} className="text-blue-500" aria-hidden />
               </div>
               <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
                   Start date
                 </p>
-                <p className="text-sm font-semibold text-[var(--foreground)]">
+                <p className="text-sm font-semibold text-slate-900">
                   {formatDate(project.start_date)}
                 </p>
               </div>
@@ -157,30 +156,34 @@ export default async function ProjectDetailPage({
           {project.end_date && (
             <div className="flex items-center gap-2.5">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-50">
-                <CalendarCheck2 size={15} className="text-amber-500" aria-hidden />
+                <CalendarCheck2
+                  size={15}
+                  className="text-amber-500"
+                  aria-hidden
+                />
               </div>
               <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
                   End date
                 </p>
-                <p className="text-sm font-semibold text-[var(--foreground)]">
+                <p className="text-sm font-semibold text-slate-900">
                   {formatDate(project.end_date)}
                 </p>
               </div>
             </div>
           )}
           <div>
-            <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+            <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-slate-500">
               Overall progress
             </p>
             <div className="flex items-center gap-2.5">
-              <div className="h-2 w-32 overflow-hidden rounded-full bg-[var(--sl-slate-200)]">
+              <div className="h-2 w-32 overflow-hidden rounded-full bg-slate-200">
                 <div
-                  className="h-full rounded-full bg-[var(--sl-green-500)] transition-all"
+                  className="h-full rounded-full bg-emerald-500 transition-all"
                   style={{ width: `${overallProgress}%` }}
                 />
               </div>
-              <span className="text-sm font-semibold text-[var(--foreground)]">
+              <span className="text-sm font-semibold text-slate-900">
                 {overallProgress}%
               </span>
             </div>
@@ -197,6 +200,6 @@ export default async function ProjectDetailPage({
           entries={diaryEntries}
         />
       </div>
-    </div>
+    </>
   );
 }

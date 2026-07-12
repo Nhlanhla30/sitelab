@@ -19,7 +19,7 @@ const EMPTY = {
 };
 
 const inputClass =
-  "w-full rounded-lg border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20";
+  "w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20";
 
 export default function AddClientModal({ userId }: Props) {
   const router = useRouter();
@@ -29,8 +29,9 @@ export default function AddClientModal({ userId }: Props) {
   const [form, setForm] = useState(EMPTY);
 
   function field(key: keyof typeof EMPTY) {
-    return (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-      setForm((f) => ({ ...f, [key]: e.target.value }));
+    return (
+      e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => setForm((f) => ({ ...f, [key]: e.target.value }));
   }
 
   function close() {
@@ -67,7 +68,7 @@ export default function AddClientModal({ userId }: Props) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 rounded-lg bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+        className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
       >
         <Plus size={14} strokeWidth={2.5} aria-hidden />
         Add client
@@ -75,17 +76,20 @@ export default function AddClientModal({ userId }: Props) {
 
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50" onClick={close} />
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={close}
+          />
           <div className="relative z-10 w-full max-w-lg rounded-2xl bg-white shadow-xl">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-[var(--border)] px-6 py-4">
-              <h2 className="text-lg font-semibold text-[var(--foreground)]">
+            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+              <h2 className="text-lg font-semibold text-slate-900">
                 Add client
               </h2>
               <button
                 type="button"
                 onClick={close}
-                className="rounded-lg p-1.5 text-[var(--muted-foreground)] transition-colors hover:bg-[var(--sl-slate-100)] hover:text-[var(--foreground)]"
+                className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900"
               >
                 <X size={16} aria-hidden />
               </button>
@@ -102,7 +106,7 @@ export default function AddClientModal({ userId }: Props) {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
-                    <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                    <label className="mb-1.5 block text-sm font-medium text-slate-900">
                       Company / client name{" "}
                       <span className="text-red-500">*</span>
                     </label>
@@ -117,7 +121,7 @@ export default function AddClientModal({ userId }: Props) {
                   </div>
 
                   <div className="col-span-2">
-                    <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                    <label className="mb-1.5 block text-sm font-medium text-slate-900">
                       Contact person <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -131,7 +135,7 @@ export default function AddClientModal({ userId }: Props) {
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                    <label className="mb-1.5 block text-sm font-medium text-slate-900">
                       Email <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -145,7 +149,7 @@ export default function AddClientModal({ userId }: Props) {
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                    <label className="mb-1.5 block text-sm font-medium text-slate-900">
                       Phone <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -159,9 +163,9 @@ export default function AddClientModal({ userId }: Props) {
                   </div>
 
                   <div className="col-span-2">
-                    <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                    <label className="mb-1.5 block text-sm font-medium text-slate-900">
                       Address{" "}
-                      <span className="text-xs font-normal text-[var(--muted-foreground)]">
+                      <span className="text-xs font-normal text-slate-500">
                         (optional)
                       </span>
                     </label>
@@ -175,9 +179,9 @@ export default function AddClientModal({ userId }: Props) {
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                    <label className="mb-1.5 block text-sm font-medium text-slate-900">
                       City{" "}
-                      <span className="text-xs font-normal text-[var(--muted-foreground)]">
+                      <span className="text-xs font-normal text-slate-500">
                         (optional)
                       </span>
                     </label>
@@ -191,9 +195,9 @@ export default function AddClientModal({ userId }: Props) {
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                    <label className="mb-1.5 block text-sm font-medium text-slate-900">
                       Province{" "}
-                      <span className="text-xs font-normal text-[var(--muted-foreground)]">
+                      <span className="text-xs font-normal text-slate-500">
                         (optional)
                       </span>
                     </label>
@@ -214,18 +218,18 @@ export default function AddClientModal({ userId }: Props) {
               </div>
 
               {/* Footer */}
-              <div className="flex gap-3 border-t border-[var(--border)] px-6 py-4">
+              <div className="flex gap-3 border-t border-slate-200 px-6 py-4">
                 <button
                   type="button"
                   onClick={close}
-                  className="flex-1 rounded-lg border border-[var(--border)] px-4 py-2.5 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--sl-slate-50)]"
+                  className="flex-1 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 rounded-lg bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+                  className="flex-1 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-60"
                 >
                   {loading ? "Saving…" : "Add client"}
                 </button>

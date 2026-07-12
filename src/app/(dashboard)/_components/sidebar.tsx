@@ -22,10 +22,7 @@ const navItems = [
   { href: "/dashboard/settings", label: "Settings",  Icon: Settings },
 ];
 
-type Props = {
-  fullName: string;
-  companyName: string;
-};
+type Props = { fullName: string; companyName: string };
 
 export default function Sidebar({ fullName, companyName }: Props) {
   const pathname = usePathname();
@@ -44,11 +41,11 @@ export default function Sidebar({ fullName, companyName }: Props) {
     .slice(0, 2);
 
   return (
-    <aside className="fixed top-0 left-0 h-screen w-64 bg-slate-900 flex flex-col z-40">
+    <aside className="flex h-full w-full flex-col bg-slate-900">
       {/* Logo */}
-      <div className="flex h-16 items-center border-b border-white/10 px-5">
+      <div className="flex h-16 shrink-0 items-center border-b border-white/10 px-5">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--sl-green-500)]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-600">
             <svg
               width="15"
               height="15"
@@ -69,19 +66,18 @@ export default function Sidebar({ fullName, companyName }: Props) {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 space-y-0.5 px-3 py-4">
+      <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4">
         {navItems.map(({ href, label, Icon }) => {
           const isActive =
             pathname === href ||
             (href !== "/dashboard" && pathname.startsWith(href));
-
           return (
             <Link
               key={href}
               href={href}
               className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                 isActive
-                  ? "bg-[var(--sl-green-500)] text-white"
+                  ? "bg-emerald-600 text-white"
                   : "text-slate-400 hover:bg-white/5 hover:text-slate-100"
               }`}
             >
@@ -96,10 +92,10 @@ export default function Sidebar({ fullName, companyName }: Props) {
         })}
       </nav>
 
-      {/* User section */}
-      <div className="border-t border-white/10 p-3">
+      {/* User */}
+      <div className="shrink-0 border-t border-white/10 p-3">
         <div className="mb-1 flex items-center gap-3 rounded-lg px-3 py-2">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--sl-green-600)] text-xs font-bold text-white">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-xs font-bold text-white">
             {initials}
           </div>
           <div className="min-w-0 flex-1">
@@ -107,9 +103,7 @@ export default function Sidebar({ fullName, companyName }: Props) {
               {fullName}
             </p>
             {companyName && (
-              <p className="truncate text-xs text-slate-400">
-                {companyName}
-              </p>
+              <p className="truncate text-xs text-slate-400">{companyName}</p>
             )}
           </div>
         </div>

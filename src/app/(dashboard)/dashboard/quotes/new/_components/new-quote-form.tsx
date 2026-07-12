@@ -52,10 +52,10 @@ function thirtyDaysOut(): string {
 }
 
 const inputClass =
-  "w-full rounded-lg border border-[var(--border)] bg-white px-3 py-2.5 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20";
+  "w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20";
 
 const cellInputClass =
-  "w-full rounded border border-transparent bg-transparent px-2 py-1.5 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[var(--primary)]/20";
+  "w-full rounded border border-transparent bg-transparent px-2 py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500/20";
 
 export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
   const router = useRouter();
@@ -169,24 +169,22 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
   }
 
   return (
-    <div className="p-8">
+    <>
       {/* Back link */}
       <button
         type="button"
         onClick={() => router.back()}
-        className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--muted-foreground)] transition-colors hover:text-[var(--foreground)]"
+        className="mb-6 inline-flex items-center gap-1.5 text-sm text-slate-500 transition-colors hover:text-slate-900"
       >
         <ChevronLeft size={15} aria-hidden />
         Quotes
       </button>
 
       {/* Page header */}
-      <div className="mb-6 flex items-start justify-between gap-4">
+      <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--foreground)]">
-            New Quote
-          </h1>
-          <p className="mt-0.5 text-sm text-[var(--muted-foreground)]">
+          <h1 className="text-2xl font-bold text-slate-900">New Quote</h1>
+          <p className="mt-0.5 text-sm text-slate-500">
             Fill in the details below and save as a draft.
           </p>
         </div>
@@ -194,7 +192,7 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
           <button
             type="button"
             onClick={() => router.back()}
-            className="rounded-lg border border-[var(--border)] px-4 py-2.5 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--sl-slate-50)]"
+            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
           >
             Cancel
           </button>
@@ -202,7 +200,7 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="rounded-lg bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-60"
           >
             {saving ? "Saving…" : "Save draft"}
           </button>
@@ -216,17 +214,16 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
       )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_272px]">
-        {/* ── Left: form ── */}
+        {/* Left: form */}
         <div className="min-w-0 space-y-6">
-
-          {/* Quote details */}
-          <div className="rounded-xl border border-[var(--border)] bg-white p-6 shadow-sm">
-            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+          {/* Quote details card */}
+          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wide text-slate-500">
               Quote details
             </h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                <label className="mb-1.5 block text-sm font-medium text-slate-900">
                   Client <span className="text-red-500">*</span>
                 </label>
                 {clients.length === 0 ? (
@@ -253,7 +250,7 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                <label className="mb-1.5 block text-sm font-medium text-slate-900">
                   Valid until <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -266,7 +263,7 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
               </div>
 
               <div className="col-span-2">
-                <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                <label className="mb-1.5 block text-sm font-medium text-slate-900">
                   Quote title <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -279,9 +276,9 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
               </div>
 
               <div className="col-span-2">
-                <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                <label className="mb-1.5 block text-sm font-medium text-slate-900">
                   Description{" "}
-                  <span className="text-xs font-normal text-[var(--muted-foreground)]">
+                  <span className="text-xs font-normal text-slate-500">
                     (optional)
                   </span>
                 </label>
@@ -296,10 +293,10 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
             </div>
           </div>
 
-          {/* Line items */}
-          <div className="rounded-xl border border-[var(--border)] bg-white shadow-sm">
-            <div className="border-b border-[var(--border)] px-6 py-4">
-              <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+          {/* Line items card */}
+          <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div className="border-b border-slate-200 px-6 py-4">
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Line items
               </h2>
             </div>
@@ -307,39 +304,39 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-[var(--border)] bg-[var(--sl-slate-50)]">
+                  <tr className="border-b border-slate-200 bg-slate-50">
                     <th
-                      className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]"
+                      className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"
                       style={{ minWidth: 200 }}
                     >
                       Description
                     </th>
                     <th
-                      className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]"
+                      className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"
                       style={{ width: 110 }}
                     >
                       Category
                     </th>
                     <th
-                      className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]"
+                      className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-slate-500"
                       style={{ width: 70 }}
                     >
                       Qty
                     </th>
                     <th
-                      className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]"
+                      className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"
                       style={{ width: 80 }}
                     >
                       Unit
                     </th>
                     <th
-                      className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]"
+                      className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-slate-500"
                       style={{ width: 110 }}
                     >
                       Unit price (R)
                     </th>
                     <th
-                      className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]"
+                      className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wide text-slate-500"
                       style={{ width: 100 }}
                     >
                       Total
@@ -347,11 +344,11 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
                     <th style={{ width: 36 }} />
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[var(--border)]">
+                <tbody className="divide-y divide-slate-100">
                   {items.map((li) => {
                     const rowTotal = lineTotal(li);
                     return (
-                      <tr key={li.id} className="group hover:bg-[var(--sl-slate-50)]">
+                      <tr key={li.id} className="group hover:bg-slate-50">
                         <td className="px-3 py-2">
                           <input
                             type="text"
@@ -419,20 +416,18 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
                             className={`${cellInputClass} text-right`}
                           />
                         </td>
-                        <td className="px-3 py-2 text-right text-sm font-semibold text-[var(--foreground)]">
+                        <td className="px-3 py-2 text-right text-sm font-semibold text-slate-900">
                           {rowTotal > 0 ? (
                             formatZAR(rowTotal)
                           ) : (
-                            <span className="text-[var(--muted-foreground)]">
-                              —
-                            </span>
+                            <span className="text-slate-400">—</span>
                           )}
                         </td>
                         <td className="px-1 py-2">
                           <button
                             type="button"
                             onClick={() => removeItem(li.id)}
-                            className="flex h-7 w-7 items-center justify-center rounded text-[var(--muted-foreground)] opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-500"
+                            className="flex h-7 w-7 items-center justify-center rounded text-slate-400 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-500"
                             aria-label="Remove row"
                           >
                             <X size={13} aria-hidden />
@@ -445,11 +440,11 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
               </table>
             </div>
 
-            <div className="border-t border-[var(--border)] px-4 py-3">
+            <div className="border-t border-slate-200 px-4 py-3">
               <button
                 type="button"
                 onClick={addItem}
-                className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-[var(--primary)] transition-colors hover:bg-[var(--sl-slate-50)]"
+                className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-emerald-600 transition-colors hover:bg-slate-50"
               >
                 <Plus size={13} strokeWidth={2.5} aria-hidden />
                 Add line item
@@ -457,16 +452,16 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
             </div>
           </div>
 
-          {/* Terms & notes */}
-          <div className="rounded-xl border border-[var(--border)] bg-white p-6 shadow-sm">
-            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+          {/* Terms & notes card */}
+          <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wide text-slate-500">
               Terms &amp; notes
             </h2>
             <div className="space-y-4">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                <label className="mb-1.5 block text-sm font-medium text-slate-900">
                   Terms &amp; conditions{" "}
-                  <span className="text-xs font-normal text-[var(--muted-foreground)]">
+                  <span className="text-xs font-normal text-slate-500">
                     (optional)
                   </span>
                 </label>
@@ -479,9 +474,9 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-[var(--foreground)]">
+                <label className="mb-1.5 block text-sm font-medium text-slate-900">
                   Internal notes{" "}
-                  <span className="text-xs font-normal text-[var(--muted-foreground)]">
+                  <span className="text-xs font-normal text-slate-500">
                     (not shown to client)
                   </span>
                 </label>
@@ -497,46 +492,46 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
           </div>
         </div>
 
-        {/* ── Right: sticky summary ── */}
+        {/* Right: sticky summary */}
         <div>
-          <div className="sticky top-6 rounded-xl border border-[var(--border)] bg-white p-6 shadow-sm">
-            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+          <div className="sticky top-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wide text-slate-500">
               Summary
             </h2>
 
             <div className="space-y-3">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-[var(--muted-foreground)]">Subtotal</span>
-                <span className="font-medium text-[var(--foreground)]">
+                <span className="text-slate-500">Subtotal</span>
+                <span className="font-medium text-slate-900">
                   {formatZAR(subtotal)}
                 </span>
               </div>
 
               <div className="flex items-center justify-between">
-                <label className="flex cursor-pointer items-center gap-2 text-sm text-[var(--muted-foreground)]">
+                <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-500">
                   <input
                     type="checkbox"
                     checked={includeVat}
                     onChange={(e) => setIncludeVat(e.target.checked)}
-                    className="h-4 w-4 cursor-pointer rounded accent-[var(--primary)]"
+                    className="h-4 w-4 cursor-pointer rounded accent-emerald-600"
                   />
                   VAT (15%)
                 </label>
-                <span className="text-sm font-medium text-[var(--foreground)]">
+                <span className="text-sm font-medium text-slate-900">
                   {includeVat ? (
                     formatZAR(vatAmount)
                   ) : (
-                    <span className="text-[var(--muted-foreground)]">—</span>
+                    <span className="text-slate-400">—</span>
                   )}
                 </span>
               </div>
 
-              <div className="border-t border-[var(--border)] pt-3">
+              <div className="border-t border-slate-200 pt-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold text-[var(--foreground)]">
+                  <span className="text-sm font-bold text-slate-900">
                     Total
                   </span>
-                  <span className="text-xl font-bold text-[var(--foreground)]">
+                  <span className="text-xl font-bold text-slate-900">
                     {formatZAR(total)}
                   </span>
                 </div>
@@ -547,13 +542,13 @@ export default function NewQuoteForm({ clients }: { clients: ClientOption[] }) {
               type="button"
               onClick={handleSave}
               disabled={saving}
-              className="mt-5 w-full rounded-lg bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+              className="mt-5 w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-60"
             >
               {saving ? "Saving…" : "Save draft"}
             </button>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -4,7 +4,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Send, CheckCircle, XCircle, ArrowRight } from "lucide-react";
 
-type QuoteStatus = "draft" | "sent" | "viewed" | "accepted" | "declined" | "expired";
+type QuoteStatus =
+  | "draft"
+  | "sent"
+  | "viewed"
+  | "accepted"
+  | "declined"
+  | "expired";
 
 type Props = {
   quoteId: string;
@@ -13,14 +19,14 @@ type Props = {
 
 const BAR: Record<
   QuoteStatus,
-  { bg: string; border: string; text: string; message: string }
+  { bar: string; text: string; message: string }
 > = {
-  draft:    { bg: "bg-[var(--sl-slate-100)]",  border: "border-[var(--sl-slate-200)]", text: "text-[var(--sl-slate-700)]",    message: "This quote is a draft."                    },
-  sent:     { bg: "bg-blue-50",                 border: "border-blue-200",              text: "text-blue-800",                  message: "Quote sent — waiting for client response." },
-  viewed:   { bg: "bg-amber-50",                border: "border-amber-200",             text: "text-amber-800",                 message: "Client has viewed this quote."             },
-  accepted: { bg: "bg-[var(--sl-green-50)]",   border: "border-[var(--sl-green-100)]", text: "text-[var(--sl-green-700)]",    message: "This quote has been accepted."             },
-  declined: { bg: "bg-red-50",                  border: "border-red-200",               text: "text-red-800",                   message: "This quote was declined by the client."    },
-  expired:  { bg: "bg-[var(--sl-slate-100)]",  border: "border-[var(--sl-slate-200)]", text: "text-[var(--sl-slate-500)]",    message: "This quote has expired."                   },
+  draft:    { bar: "bg-slate-100 border-slate-200",    text: "text-slate-700",   message: "This quote is a draft."                    },
+  sent:     { bar: "bg-blue-50 border-blue-200",        text: "text-blue-800",    message: "Quote sent — waiting for client response." },
+  viewed:   { bar: "bg-amber-50 border-amber-200",      text: "text-amber-800",   message: "Client has viewed this quote."             },
+  accepted: { bar: "bg-emerald-50 border-emerald-200",  text: "text-emerald-800", message: "This quote has been accepted."             },
+  declined: { bar: "bg-red-50 border-red-200",          text: "text-red-800",     message: "This quote was declined by the client."    },
+  expired:  { bar: "bg-slate-100 border-slate-200",    text: "text-slate-500",   message: "This quote has expired."                   },
 };
 
 export default function QuoteActions({ quoteId, status }: Props) {
@@ -54,7 +60,7 @@ export default function QuoteActions({ quoteId, status }: Props) {
   const bar = BAR[status];
 
   return (
-    <div className={`rounded-xl border px-5 py-3.5 ${bar.bg} ${bar.border}`}>
+    <div className={`rounded-xl border px-5 py-3.5 ${bar.bar}`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className={`text-sm font-medium ${bar.text}`}>{bar.message}</p>
 
@@ -63,7 +69,7 @@ export default function QuoteActions({ quoteId, status }: Props) {
             <button
               onClick={() => changeStatus("sent")}
               disabled={loading !== null}
-              className="flex items-center gap-2 rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+              className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-60"
             >
               <Send size={13} aria-hidden />
               {loading === "sent" ? "Updating…" : "Mark as Sent"}
@@ -75,7 +81,7 @@ export default function QuoteActions({ quoteId, status }: Props) {
               <button
                 onClick={() => changeStatus("accepted")}
                 disabled={loading !== null}
-                className="flex items-center gap-2 rounded-lg bg-[var(--sl-green-500)] px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+                className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-60"
               >
                 <CheckCircle size={14} aria-hidden />
                 {loading === "accepted" ? "Updating…" : "Mark as Accepted"}
@@ -83,7 +89,7 @@ export default function QuoteActions({ quoteId, status }: Props) {
               <button
                 onClick={() => changeStatus("declined")}
                 disabled={loading !== null}
-                className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+                className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-60"
               >
                 <XCircle size={14} aria-hidden />
                 {loading === "declined" ? "Updating…" : "Mark as Declined"}
@@ -95,7 +101,7 @@ export default function QuoteActions({ quoteId, status }: Props) {
             <div className="relative">
               <button
                 onClick={handleConvertToProject}
-                className="flex items-center gap-2 rounded-lg border border-[var(--sl-green-300)] bg-white px-4 py-2 text-sm font-semibold text-[var(--sl-green-700)] transition-colors hover:bg-[var(--sl-green-50)]"
+                className="flex items-center gap-2 rounded-lg border border-emerald-300 bg-white px-4 py-2 text-sm font-semibold text-emerald-700 transition-colors hover:bg-emerald-50"
               >
                 Convert to Project
                 <ArrowRight size={13} aria-hidden />

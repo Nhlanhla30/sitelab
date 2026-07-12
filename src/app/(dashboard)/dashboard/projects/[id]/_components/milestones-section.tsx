@@ -24,7 +24,7 @@ type Props = {
 const BLANK_FORM = { title: "", description: "", due_date: "" };
 
 const inputClass =
-  "w-full rounded-lg border border-[var(--border)] bg-white px-3 py-2 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20";
+  "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20";
 
 export default function MilestonesSection({ projectId, milestones }: Props) {
   const router = useRouter();
@@ -78,18 +78,22 @@ export default function MilestonesSection({ projectId, milestones }: Props) {
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-white shadow-sm">
+    <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[var(--border)] px-6 py-4">
+      <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
         <div>
-          <h2 className="font-semibold text-[var(--foreground)]">Milestones</h2>
-          <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">
-            {milestones.length} {milestones.length === 1 ? "milestone" : "milestones"}
+          <h2 className="font-semibold text-slate-900">Milestones</h2>
+          <p className="mt-0.5 text-xs text-slate-500">
+            {milestones.length}{" "}
+            {milestones.length === 1 ? "milestone" : "milestones"}
           </p>
         </div>
         <button
-          onClick={() => { setShowForm((s) => !s); setError(null); }}
-          className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--sl-slate-50)]"
+          onClick={() => {
+            setShowForm((s) => !s);
+            setError(null);
+          }}
+          className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
         >
           <Plus size={13} strokeWidth={2.5} aria-hidden />
           Add milestone
@@ -100,7 +104,7 @@ export default function MilestonesSection({ projectId, milestones }: Props) {
       {showForm && (
         <form
           onSubmit={handleAdd}
-          className="border-b border-[var(--border)] bg-[var(--sl-slate-50)] px-6 py-4"
+          className="border-b border-slate-200 bg-slate-50 px-6 py-4"
         >
           {error && (
             <p className="mb-3 text-sm text-red-600">{error}</p>
@@ -124,14 +128,18 @@ export default function MilestonesSection({ projectId, milestones }: Props) {
               <button
                 type="submit"
                 disabled={saving}
-                className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-60"
               >
                 {saving ? "Adding…" : "Add"}
               </button>
               <button
                 type="button"
-                onClick={() => { setShowForm(false); setForm(BLANK_FORM); setError(null); }}
-                className="rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-[var(--muted-foreground)] transition-colors hover:bg-white"
+                onClick={() => {
+                  setShowForm(false);
+                  setForm(BLANK_FORM);
+                  setError(null);
+                }}
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-500 transition-colors hover:bg-white"
               >
                 Cancel
               </button>
@@ -149,32 +157,30 @@ export default function MilestonesSection({ projectId, milestones }: Props) {
 
       {/* List */}
       {milestones.length === 0 && !showForm ? (
-        <p className="px-6 py-8 text-sm text-[var(--muted-foreground)]">
+        <p className="px-6 py-8 text-sm text-slate-500">
           No milestones yet. Add one to start tracking progress.
         </p>
       ) : (
-        <ul className="divide-y divide-[var(--border)]">
+        <ul className="divide-y divide-slate-100">
           {milestones.map((m) => {
             const done = m.completed_at !== null;
             return (
               <li key={m.id} className="flex items-start gap-4 px-6 py-4">
-                {/* Checkbox */}
+                {/* Toggle checkbox */}
                 <button
                   type="button"
                   onClick={() => toggleComplete(m)}
                   disabled={toggling === m.id}
-                  className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors disabled:opacity-50"
-                  style={
+                  className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors disabled:opacity-50 ${
                     done
-                      ? {
-                          backgroundColor: "var(--sl-green-500)",
-                          borderColor: "var(--sl-green-500)",
-                        }
-                      : { borderColor: "var(--sl-slate-300)" }
-                  }
+                      ? "border-emerald-500 bg-emerald-500"
+                      : "border-slate-300 bg-white"
+                  }`}
                   aria-label={done ? "Mark incomplete" : "Mark complete"}
                 >
-                  {done && <Check size={11} color="white" strokeWidth={3} aria-hidden />}
+                  {done && (
+                    <Check size={11} color="white" strokeWidth={3} aria-hidden />
+                  )}
                 </button>
 
                 <div className="min-w-0 flex-1">
@@ -182,33 +188,33 @@ export default function MilestonesSection({ projectId, milestones }: Props) {
                     <p
                       className={`text-sm font-medium ${
                         done
-                          ? "text-[var(--muted-foreground)] line-through"
-                          : "text-[var(--foreground)]"
+                          ? "text-slate-400 line-through"
+                          : "text-slate-900"
                       }`}
                     >
                       {m.title}
                     </p>
                     {m.due_date && (
-                      <span className="shrink-0 text-xs text-[var(--muted-foreground)]">
+                      <span className="shrink-0 text-xs text-slate-500">
                         Due {formatDate(m.due_date)}
                       </span>
                     )}
                   </div>
 
                   {m.description && (
-                    <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">
+                    <p className="mt-0.5 text-xs text-slate-500">
                       {m.description}
                     </p>
                   )}
 
                   <div className="mt-2 flex items-center gap-2">
-                    <div className="h-1.5 w-32 overflow-hidden rounded-full bg-[var(--sl-slate-200)]">
+                    <div className="h-1.5 w-32 overflow-hidden rounded-full bg-slate-200">
                       <div
-                        className="h-full rounded-full bg-[var(--sl-green-500)] transition-all"
+                        className="h-full rounded-full bg-emerald-500 transition-all"
                         style={{ width: `${m.percent_complete}%` }}
                       />
                     </div>
-                    <span className="text-xs text-[var(--muted-foreground)]">
+                    <span className="text-xs text-slate-500">
                       {m.percent_complete}%
                     </span>
                   </div>

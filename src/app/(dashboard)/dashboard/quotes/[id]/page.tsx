@@ -14,13 +14,13 @@ type QuoteStatus = QuoteRow["status"];
 
 export const metadata: Metadata = { title: "Quote" };
 
-const STATUS_CONFIG: Record<QuoteStatus, { label: string; className: string }> = {
-  draft:    { label: "Draft",    className: "badge-draft"    },
-  sent:     { label: "Sent",     className: "badge-sent"     },
-  viewed:   { label: "Viewed",   className: "badge-viewed"   },
-  accepted: { label: "Accepted", className: "badge-accepted" },
-  declined: { label: "Declined", className: "badge-declined" },
-  expired:  { label: "Expired",  className: "badge-draft"    },
+const STATUS_CONFIG: Record<QuoteStatus, { label: string; cls: string }> = {
+  draft:    { label: "Draft",    cls: "bg-slate-100 text-slate-600"      },
+  sent:     { label: "Sent",     cls: "bg-blue-100 text-blue-700"        },
+  viewed:   { label: "Viewed",   cls: "bg-amber-100 text-amber-700"      },
+  accepted: { label: "Accepted", cls: "bg-emerald-100 text-emerald-700"  },
+  declined: { label: "Declined", cls: "bg-red-100 text-red-700"          },
+  expired:  { label: "Expired",  cls: "bg-slate-100 text-slate-500"      },
 };
 
 const CATEGORY_LABELS: Record<LineItemRow["category"], string> = {
@@ -72,11 +72,11 @@ export default async function QuoteDetailPage({
   const status = STATUS_CONFIG[quote.status];
 
   return (
-    <div className="p-8">
+    <>
       {/* Back link */}
       <Link
         href="/dashboard/quotes"
-        className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--muted-foreground)] transition-colors hover:text-[var(--foreground)]"
+        className="mb-6 inline-flex items-center gap-1.5 text-sm text-slate-500 transition-colors hover:text-slate-900"
       >
         <ChevronLeft size={15} aria-hidden />
         Quotes
@@ -86,27 +86,23 @@ export default async function QuoteDetailPage({
       <div className="mb-5 flex items-start justify-between gap-4">
         <div>
           <div className="mb-2 flex items-center gap-3">
-            <span className="font-mono text-sm font-semibold text-[var(--muted-foreground)]">
+            <span className="font-mono text-sm font-semibold text-slate-500">
               {quote.quote_number ?? "—"}
             </span>
             <span
-              className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${status.className}`}
+              className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${status.cls}`}
             >
               {status.label}
             </span>
           </div>
-          <h1 className="text-2xl font-bold text-[var(--foreground)]">
-            {quote.title}
-          </h1>
+          <h1 className="text-2xl font-bold text-slate-900">{quote.title}</h1>
           {quote.description && (
-            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              {quote.description}
-            </p>
+            <p className="mt-1 text-sm text-slate-500">{quote.description}</p>
           )}
         </div>
         <Link
           href={`/dashboard/quotes/${id}/edit`}
-          className="flex shrink-0 items-center gap-2 rounded-lg border border-[var(--border)] px-4 py-2.5 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--sl-slate-50)]"
+          className="flex shrink-0 items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
         >
           <Pencil size={14} aria-hidden />
           Edit
@@ -120,66 +116,66 @@ export default async function QuoteDetailPage({
 
       {/* Body */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_272px]">
-        {/* ── Left: line items + terms ── */}
+        {/* Left: line items + terms */}
         <div className="min-w-0 space-y-6">
-          {/* Line items */}
-          <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-white shadow-sm">
-            <div className="border-b border-[var(--border)] px-6 py-4">
-              <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+          {/* Line items card */}
+          <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div className="border-b border-slate-200 px-6 py-4">
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Line items
               </h2>
             </div>
 
             {lineItems.length === 0 ? (
-              <p className="px-6 py-8 text-sm text-[var(--muted-foreground)]">
+              <p className="px-6 py-8 text-sm text-slate-500">
                 No line items on this quote.
               </p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-[var(--border)] bg-[var(--sl-slate-50)]">
-                      <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                    <tr className="border-b border-slate-200 bg-slate-50">
+                      <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                         Description
                       </th>
-                      <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                      <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                         Category
                       </th>
-                      <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                      <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
                         Qty
                       </th>
-                      <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                      <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                         Unit
                       </th>
-                      <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                      <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
                         Unit price
                       </th>
-                      <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+                      <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
                         Total
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[var(--border)]">
+                  <tbody className="divide-y divide-slate-100">
                     {lineItems.map((item) => (
-                      <tr key={item.id} className="hover:bg-[var(--sl-slate-50)]">
-                        <td className="px-5 py-3.5 text-sm text-[var(--foreground)]">
+                      <tr key={item.id} className="hover:bg-slate-50">
+                        <td className="px-4 py-3 text-sm text-slate-900">
                           {item.description}
                         </td>
-                        <td className="px-5 py-3.5 text-sm text-[var(--muted-foreground)]">
+                        <td className="px-4 py-3 text-sm text-slate-500">
                           {CATEGORY_LABELS[item.category]}
                         </td>
-                        <td className="px-5 py-3.5 text-right text-sm text-[var(--foreground)]">
+                        <td className="px-4 py-3 text-right text-sm text-slate-900">
                           {item.quantity % 1 === 0
                             ? item.quantity
                             : item.quantity.toFixed(2)}
                         </td>
-                        <td className="px-5 py-3.5 text-sm text-[var(--muted-foreground)]">
+                        <td className="px-4 py-3 text-sm text-slate-500">
                           {item.unit}
                         </td>
-                        <td className="px-5 py-3.5 text-right text-sm text-[var(--foreground)]">
+                        <td className="px-4 py-3 text-right text-sm text-slate-900">
                           {formatZAR(item.unit_price)}
                         </td>
-                        <td className="px-5 py-3.5 text-right text-sm font-semibold text-[var(--foreground)]">
+                        <td className="px-4 py-3 text-right text-sm font-semibold text-slate-900">
                           {formatZAR(item.total)}
                         </td>
                       </tr>
@@ -190,25 +186,25 @@ export default async function QuoteDetailPage({
             )}
 
             {/* Totals footer */}
-            <div className="border-t border-[var(--border)] bg-[var(--sl-slate-50)] px-6 py-4">
+            <div className="border-t border-slate-200 bg-slate-50 px-6 py-4">
               <div className="ml-auto max-w-xs space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--muted-foreground)]">Subtotal</span>
-                  <span className="font-medium text-[var(--foreground)]">
+                  <span className="text-slate-500">Subtotal</span>
+                  <span className="font-medium text-slate-900">
                     {formatZAR(quote.subtotal)}
                   </span>
                 </div>
                 {quote.include_vat && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-[var(--muted-foreground)]">VAT (15%)</span>
-                    <span className="font-medium text-[var(--foreground)]">
+                    <span className="text-slate-500">VAT (15%)</span>
+                    <span className="font-medium text-slate-900">
                       {formatZAR(quote.vat_amount)}
                     </span>
                   </div>
                 )}
-                <div className="flex justify-between border-t border-[var(--border)] pt-2.5">
-                  <span className="font-bold text-[var(--foreground)]">Total</span>
-                  <span className="text-lg font-bold text-[var(--foreground)]">
+                <div className="flex justify-between border-t border-slate-200 pt-2.5">
+                  <span className="font-bold text-slate-900">Total</span>
+                  <span className="text-lg font-bold text-slate-900">
                     {formatZAR(quote.total)}
                   </span>
                 </div>
@@ -216,13 +212,13 @@ export default async function QuoteDetailPage({
             </div>
           </div>
 
-          {/* Terms & conditions */}
+          {/* Terms */}
           {quote.terms && (
-            <div className="rounded-xl border border-[var(--border)] bg-white p-6 shadow-sm">
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Terms &amp; conditions
               </h2>
-              <p className="whitespace-pre-line text-sm leading-relaxed text-[var(--foreground)]">
+              <p className="whitespace-pre-line text-sm leading-relaxed text-slate-900">
                 {quote.terms}
               </p>
             </div>
@@ -230,45 +226,43 @@ export default async function QuoteDetailPage({
 
           {/* Internal notes */}
           {quote.notes && (
-            <div className="rounded-xl border border-[var(--border)] bg-white p-6 shadow-sm">
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Internal notes
               </h2>
-              <p className="whitespace-pre-line text-sm leading-relaxed text-[var(--foreground)]">
+              <p className="whitespace-pre-line text-sm leading-relaxed text-slate-900">
                 {quote.notes}
               </p>
             </div>
           )}
         </div>
 
-        {/* ── Right sidebar ── */}
+        {/* Right sidebar */}
         <div className="space-y-4">
-          {/* Client */}
+          {/* Client card */}
           {client && (
-            <div className="rounded-xl border border-[var(--border)] bg-white p-5 shadow-sm">
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Client
               </h2>
-              <p className="font-semibold text-[var(--foreground)]">
-                {client.name}
-              </p>
-              <p className="mt-0.5 text-sm text-[var(--muted-foreground)]">
+              <p className="font-semibold text-slate-900">{client.name}</p>
+              <p className="mt-0.5 text-sm text-slate-500">
                 {client.contact_person}
               </p>
               <div className="mt-3 space-y-2">
                 <a
                   href={`mailto:${client.email}`}
-                  className="flex items-center gap-2 text-sm text-[var(--primary)] hover:underline"
+                  className="flex items-center gap-2 text-sm text-emerald-600 hover:underline"
                 >
                   <Mail size={13} aria-hidden />
                   {client.email}
                 </a>
-                <p className="flex items-center gap-2 text-sm text-[var(--muted-foreground)]">
+                <p className="flex items-center gap-2 text-sm text-slate-500">
                   <Phone size={13} aria-hidden />
                   {client.phone}
                 </p>
                 {(client.city || client.province) && (
-                  <p className="flex items-center gap-2 text-sm text-[var(--muted-foreground)]">
+                  <p className="flex items-center gap-2 text-sm text-slate-500">
                     <MapPin size={13} aria-hidden />
                     {[client.city, client.province].filter(Boolean).join(", ")}
                   </p>
@@ -277,36 +271,36 @@ export default async function QuoteDetailPage({
             </div>
           )}
 
-          {/* Dates */}
-          <div className="rounded-xl border border-[var(--border)] bg-white p-5 shadow-sm">
-            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">
+          {/* Dates card */}
+          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
               Dates
             </h2>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-[var(--muted-foreground)]">Created</span>
-                <span className="text-[var(--foreground)]">
+                <span className="text-slate-500">Created</span>
+                <span className="text-slate-900">
                   {formatDate(quote.created_at)}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-[var(--muted-foreground)]">Valid until</span>
-                <span className="font-medium text-[var(--foreground)]">
+                <span className="text-slate-500">Valid until</span>
+                <span className="font-medium text-slate-900">
                   {formatDate(quote.valid_until)}
                 </span>
               </div>
               {quote.sent_at && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--muted-foreground)]">Sent</span>
-                  <span className="text-[var(--foreground)]">
+                  <span className="text-slate-500">Sent</span>
+                  <span className="text-slate-900">
                     {formatDate(quote.sent_at)}
                   </span>
                 </div>
               )}
               {quote.responded_at && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--muted-foreground)]">Responded</span>
-                  <span className="text-[var(--foreground)]">
+                  <span className="text-slate-500">Responded</span>
+                  <span className="text-slate-900">
                     {formatDate(quote.responded_at)}
                   </span>
                 </div>
@@ -315,6 +309,6 @@ export default async function QuoteDetailPage({
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
